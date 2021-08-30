@@ -3,3 +3,5 @@ pytest-selenium
 termcolor
 allure-python-commons
 allure-pytest
+pillow
+numpy

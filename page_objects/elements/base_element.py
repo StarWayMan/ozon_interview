@@ -16,7 +16,7 @@ class WebElement(object):
     _web_driver = None
     _page = None
     _timeout = 10
-    _wait_after_click = False  # TODO: how we can wait after click?
+    _wait_after_click = False
 
     def __init__(self, timeout=10, wait_after_click=False, **kwargs):
         self._timeout = timeout
@@ -221,7 +221,7 @@ class WebElement(object):
         self._web_driver.execute_script("arguments[0].remove();", element)
 
 
-class ManyWebElements(WebElement):
+class WebElements(WebElement):
 
     def __getitem__(self, item):
         """ Get list of elements and try to return required element. """

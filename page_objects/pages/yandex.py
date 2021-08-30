@@ -3,9 +3,9 @@
 
 import os
 
-from pages.base import WebPage
-from pages.elements import WebElement
-from pages.elements import ManyWebElements
+from page_objects.pages.base_page import WebPage
+from page_objects.elements.base_element import WebElement
+from page_objects.elements.base_element import WebElements
 
 
 class MainPage(WebPage):
@@ -23,10 +23,10 @@ class MainPage(WebPage):
     search_run_button = WebElement(xpath='//button[@type="submit"]')
 
     # Titles of the products in search results
-    products_titles = ManyWebElements(xpath='//a[contains(@href, "/product-") and @title!=""]')
+    products_titles = WebElements(xpath='//a[contains(@href, "/product-") and @title!=""]')
 
     # Button to sort products by price
     sort_products_by_price = WebElement(css_selector='button[data-autotest-id="dprice"]')
 
     # Prices of the products in search results
-    products_prices = ManyWebElements(xpath='//div[@data-zone-name="price"]//span/*[1]')
+    products_prices = WebElements(xpath='//div[@data-zone-name="price"]//span/*[1]')

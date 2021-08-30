@@ -105,19 +105,10 @@ class WebPage(object):
                 assert ignore, 'JS error "{0}" on the page!'.format(log_message)
 
     def wait_page_loaded(self, timeout=60, check_js_complete=True,
-                         check_page_changes=False, check_images=False,
+                         check_page_changes=False,
                          wait_for_element=None,
-                         wait_for_xpath_to_disappear='',
+                         wait_for_css_selector_to_disappear='',
                          sleep_time=2):
-        """ This function waits until the page will be completely loaded.
-            We use many different ways to detect is page loaded or not:
-
-            1) Check JS status
-            2) Check modification in source code of the page
-            3) Check that all images uploaded completely
-               (Note: this check is disabled by default)
-            4) Check that expected elements presented on the page
-        """
 
         page_loaded = False
         double_check = False
@@ -158,12 +149,12 @@ class WebPage(object):
                 source = new_source
 
             # Wait when some element will disappear:
-            if page_loaded and wait_for_xpath_to_disappear:
+            if page_loaded and wait_for_css_selector_to_disappear:
                 bad_element = None
 
                 try:
                     bad_element = WebDriverWait(self._web_driver, 0.1).until(
-                        EC.presence_of_element_located((By.XPATH, wait_for_xpath_to_disappear))
+                        EC.presence_of_element_located((By.CSS_SELECTOR, wait_for_css_selector_to_disappear))
                     )
                 except:
                     pass  # Ignore timeout errors

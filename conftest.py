@@ -8,6 +8,9 @@ import pytest
 import allure
 import uuid
 import sys
+import os
+import numpy as np
+from PIL import Image
 
 
 @pytest.fixture
@@ -18,15 +21,6 @@ def chrome_options(chrome_options):
     chrome_options.add_argument('--log-level=DEBUG')
 
     return chrome_options
-
-
-def pytest_load_initial_conftests(args):
-    # Tests will be fired in mutithread mode if xdist is installed
-    if "xdist" in sys.modules:  # pytest-xdist plugin
-        import multiprocessing
-
-        num = max(multiprocessing.cpu_count() / 2, 1)
-        args[:] = ["-n", str(num)] + args
 
 
 @pytest.hookimpl(hookwrapper=True, tryfirst=True)
@@ -125,3 +119,45 @@ def pytest_collection_finish(session):
                 print(full_name)
 
         pytest.exit('Done!')
+
+
+def assert_images_equal(image_1: str, image_2: str):
+    img1 = Image.open(image_1)
+    img2 = Image.open(image_2)
+
+    # Convert to same mode and size for comparison
+    img2 = img2.convert(img1.mode)
+    img2 = img2.resize(img1.size)
+
+    sum_sq_diff = np.sum((np.asarray(img1).astype('float') - np.asarray(img2).astype('float'))**2)
+
+    if sum_sq_diff == 0:
+        # Images are exactly the same
+        pass
+    else:
+        normalized_sum_sq_diff = sum_sq_diff / np.sqrt(sum_sq_diff)
+        assert normalized_sum_sq_diff < 0.001
+
+
+@pytest.fixture
+def image_similarity(request, tmpdir):
+    """
+    Assert the similarity of two images
+    """
+    testname = request.node.name
+    generated_file = os.path.join(str(tmpdir), "{}.png".format(testname))
+
+    yield {'filename': generated_file}
+
+    assert_images_equal("tests/baseline_images/{}.png".format(testname), generated_file)
+
+
+def pytest_load_initial_conftests(args):
+    """
+    Tests will be fired in mutithread mode if xdist is installed
+    """
+    if "xdist" in sys.modules:  # pytest-xdist plugin
+        import multiprocessing
+
+        num = max(multiprocessing.cpu_count() / 2, 1)
+        args[:] = ["-n", str(num)] + args
