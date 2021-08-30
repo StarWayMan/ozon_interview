@@ -300,3 +300,19 @@ class WebElements(WebElement):
 
         # Make screen-shot of the page:
         self._web_driver.save_screenshot(file_name)
+
+    def get_element_with_text(self, target_text='', case_sensitive=True):
+        """ Returns the first element with target text from the list of elements. """
+
+        elements = self.find()
+
+        for element in elements:
+            if case_sensitive:
+                if str(element.text).upper() == target_text.upper():
+                    return element
+
+            if str(element.text) == target_text:
+                return element
+
+        msg = 'Element with text {0} not found'
+        raise AttributeError(msg.format(target_text))
