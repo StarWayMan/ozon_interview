@@ -12,7 +12,7 @@ How To Run Tests
 3) Run tests:
 
     ```bash
-    python3 -m pytest -v --driver Chrome --driver-path ~/chrome tests/* --alluredir ./reports
+    python3 -m pytest -v --driver Chrome --driver-path ~/chrome_driver --alluredir ./reports
     ```
    
 4) To compile a report
